@@ -36,7 +36,7 @@ public class JobData {
         ArrayList<String> values = new ArrayList<>();
 
         for (HashMap<String, String> row : allJobs) {
-            String aValue = row.get(field);
+            String aValue = row.get(field);  /* this field will be 1 of the values in turn - from this hashmap which is one element of the arrayList */
 
             if (!values.contains(aValue)) {
                 values.add(aValue);
@@ -66,6 +66,7 @@ public class JobData {
      * @return List of all jobs matching the criteria
      */
     public static ArrayList<HashMap<String, String>> findByColumnAndValue(String column, String value) {
+        String valueInLowerCase = value.toLowerCase();
 
         // load data, if not already loaded
         loadData();
@@ -74,10 +75,11 @@ public class JobData {
 
         for (HashMap<String, String> row : allJobs) {
 
-            String aValue = row.get(column);
+            String aValue = row.get(column); /* put value into "avalue" for key=column */
+            String aValueInLowerCase = aValue.toLowerCase();
 
-            if (aValue.contains(value)) {
-                jobs.add(row);
+            if (aValue.contains(valueInLowerCase)) { /* if avalue = value (input param to this method)*/
+                jobs.add(row); /* add whole row to jobs arrayList */
             }
         }
 
@@ -113,7 +115,7 @@ public class JobData {
                     newJob.put(headerLabel, record.get(headerLabel));
                 }
 
-                allJobs.add(newJob);
+                allJobs.add(newJob); /* Add the hashmap of this row from the .csv file to the arraylist */
             }
 
             // flag the data as loaded, so we don't do it twice
@@ -123,6 +125,29 @@ public class JobData {
             System.out.println("Failed to load job data");
             e.printStackTrace();
         }
+    }
+
+    public static ArrayList<HashMap<String, String>> findByValue(String value) {
+        String valueInLowerCase = value.toLowerCase();
+
+        // load data, if not already loaded
+        loadData();
+
+        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+
+        for (HashMap<String, String> row : allJobs) { //loop thru each job(hashmap) in the arrayList
+
+            for (String istring: row.keySet() ) { // loop thru each column until string value is found
+                    String aValue = row.get(istring); // put value into "avalue" for this column
+                    String aValueInLowerCase = aValue.toLowerCase();
+                    if (aValueInLowerCase.contains(valueInLowerCase)) { // if avalue = value (input param to this method)
+                        jobs.add(row); // add whole job (hashmap/row)to jobs arrayList
+                        //                    //string_found = true;
+                        break; //break out of the loop which iterates over each column
+                    }
+            }
+        }
+        return jobs;
     }
 
 }
